@@ -1,96 +1,105 @@
-import React from 'react';
-import { Sidebar } from '@/components/dashboard/Sidebar';
-import { MetricCard } from '@/components/dashboard/MetricCard';
-import { TopicGrid } from '@/components/dashboard/TopicGrid';
-import { Bell, Calendar, Activity } from 'lucide-react';
-import Link from 'next/link';
-import { MOCK_USER_PROFILE } from '@/lib/mockData';
+'use client';
 
-export default function Dashboard() {
+import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
+import { Mic } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useHeyGenAvatar } from '@/hooks/useHeyGen';
+import { HEYGEN_CONFIG } from '@/lib/config';
+import { AnalyticsPanel } from '@/components/analytics';
+
+const AvatarSession = dynamic(
+  () => import('@/components/avatar/AvatarSession').then(mod => ({ default: mod.AvatarSession })),
+  { ssr: false },
+);
+
+export default function HomePage() {
+  const { session, isLoading, videoRef, avatarRef, startSession, endSession } = useHeyGenAvatar(HEYGEN_CONFIG.AVATAR_ID);
+  const [hasJoined, setHasJoined] = useState(false);
+
+  const handleJoin = async () => {
+    setHasJoined(true);
+    await startSession();
+  };
+
+  useEffect(() => {
+    return () => { endSession(); };
+  }, [endSession]);
+
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-
-      <main className="flex-1 ml-20 p-10">
-        {/* Top Navigation */}
-        <header className="flex justify-between items-center mb-12">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm relative bg-blue-100 flex items-center justify-center">
-              <span className="text-blue-600 font-bold text-lg">A</span>
-            </div>
-            <div>
-              <h2 className="text-slate-900 font-bold">Amit Cohen</h2>
-            </div>
+    <main className="h-screen w-full bg-slate-950 grid grid-rows-[56px_1fr] grid-cols-[1fr_340px] overflow-hidden font-sans">
+      {/* TOP BAR */}
+      <header className="col-span-2 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-6 z-20">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+            <span className="text-cyan-400 font-bold text-xs">A</span>
           </div>
-
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-center">
-              <h1 className="text-2xl font-black text-blue-900 tracking-tight">AIINAH</h1>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Health & Wellness</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm relative text-slate-400">
-              <Bell size={20} />
-              <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
-            </button>
-          </div>
-        </header>
-
-        {/* Overview Controls */}
-        <div className="flex justify-between items-center mb-8">
-          <h3 className="text-2xl font-bold text-slate-800 tracking-tight">Overview</h3>
-          <div className="flex gap-2">
-            <button className="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm text-slate-400">
-              <Calendar size={18} />
-            </button>
-            <select className="bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm text-sm font-bold text-slate-500 outline-none">
-              <option>Month</option>
-              <option>Week</option>
-            </select>
+          <div>
+            <h1 className="text-sm font-bold text-white tracking-tight">AIINAH</h1>
+            <p className="text-[9px] text-slate-500 uppercase tracking-widest">Health Session</p>
           </div>
         </div>
 
-        {/* Overview Row */}
-        <div className="flex gap-6 mb-12">
-          <MetricCard
-            title="Overall Score"
-            value={Math.round(((MOCK_USER_PROFILE.wearableData.dailySteps / 10000 * 100) + (MOCK_USER_PROFILE.wearableData.lastNightSleep / 8 * 100)) / 2).toString()}
-            percentage={Math.round(((MOCK_USER_PROFILE.wearableData.dailySteps / 10000 * 100) + (MOCK_USER_PROFILE.wearableData.lastNightSleep / 8 * 100)) / 2)}
-            color="text-blue-500"
-            chartColor="#3B82F6"
-          />
-          <MetricCard
-            title="Daily Activity"
-            value={`${MOCK_USER_PROFILE.wearableData.dailySteps.toLocaleString()} steps`}
-            percentage={Math.min(Math.round(MOCK_USER_PROFILE.wearableData.dailySteps / 10000 * 100), 100)}
-            color="text-emerald-500"
-            chartColor="#10B981"
-          />
-          <MetricCard
-            title="Sleep Quality"
-            value={`${MOCK_USER_PROFILE.wearableData.lastNightSleep}h`}
-            percentage={Math.min(Math.round(MOCK_USER_PROFILE.wearableData.lastNightSleep / 8 * 100), 100)}
-            color="text-cyan-400"
-            chartColor="#22D3EE"
-          />
+        {/* Center: session status */}
+        <div className="flex items-center gap-2">
+          {hasJoined && session?.status === 'connected' ? (
+            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Live</span>
+            </div>
+          ) : hasJoined ? (
+            <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Connecting</span>
+            </div>
+          ) : null}
         </div>
 
-        {/* Bottom Grid */}
-        <TopicGrid />
+        {/* Right: end session */}
+        <div className="w-24 flex justify-end">
+          {hasJoined && (
+            <button
+              onClick={endSession}
+              className="text-[10px] font-bold text-slate-500 hover:text-rose-400 uppercase tracking-wider transition-colors"
+            >
+              End
+            </button>
+          )}
+        </div>
+      </header>
 
-        {/* Start Check-in FAB */}
-        <Link
-          href="/chat"
-          className="fixed bottom-10 right-10 bg-blue-600 text-white flex items-center gap-3 px-8 py-5 rounded-[2rem] font-bold shadow-2xl shadow-blue-600/30 hover:bg-blue-700 transition-all hover:scale-105 active:scale-95 z-50 group"
-        >
-          <div className="bg-white/20 p-2 rounded-xl group-hover:rotate-12 transition-transform">
-            <Activity size={24} />
-          </div>
-          <span className="text-lg">Start Check-in</span>
-        </Link>
-      </main>
-    </div>
+      {/* VIDEO STREAM */}
+      <section className="relative bg-slate-950 flex items-center justify-center p-4 min-w-0 overflow-hidden">
+        <div className="relative w-full max-w-4xl h-full bg-slate-900 rounded-2xl overflow-hidden ring-1 ring-cyan-500/20 shadow-glow-cyan">
+          <AvatarSession
+            isLoading={isLoading && hasJoined}
+            isConnected={session?.status === 'connected'}
+            videoRef={videoRef}
+            avatar={avatarRef.current}
+            onEndSession={endSession}
+          />
+
+          {/* Join Overlay */}
+          {!hasJoined && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm">
+              <motion.button
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={handleJoin}
+                className="bg-cyan-600 text-white px-7 py-3.5 rounded-2xl font-bold text-lg shadow-glow-cyan-md hover:bg-cyan-500 transition-all hover:scale-105 active:scale-95 flex items-center gap-3 border border-cyan-500/30"
+              >
+                <div className="bg-white/10 p-2 rounded-xl">
+                  <Mic size={20} />
+                </div>
+                Start Session
+              </motion.button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ANALYTICS PANEL */}
+      <AnalyticsPanel userName="Amit Cohen" />
+    </main>
   );
 }

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"[System.Environment]::GetEnvironmentVariable\\(''HEYGEN_API_KEY'', ''User''\\)\")",
+      "Bash(powershell -Command \"[System.Environment]::GetEnvironmentVariable\\(''HEYGEN_API_KEY'', ''Machine''\\)\")",
+      "Bash(powershell -Command \"[System.Environment]::GetEnvironmentVariable\\(''HEYGEN_API_KEY'', ''Process''\\)\")",
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(del \"C:\\\\Users\\\\danie\\\\Documents\\\\GitHub\\\\AIINAH\\\\src\\\\app\\\\test-conversation\\\\page.tsx\")",
+      "Bash(del \"C:\\\\Users\\\\danie\\\\Documents\\\\GitHub\\\\AIINAH\\\\src\\\\components\\\\dashboard\\\\MetricCard.tsx\")",
+      "Bash(del \"C:\\\\Users\\\\danie\\\\Documents\\\\GitHub\\\\AIINAH\\\\src\\\\components\\\\dashboard\\\\TopicGrid.tsx\")",
+      "Bash(del \"C:\\\\Users\\\\danie\\\\Documents\\\\GitHub\\\\AIINAH\\\\src\\\\components\\\\dashboard\\\\Sidebar.tsx\")",
+      "Bash(del \"C:\\\\Users\\\\danie\\\\Documents\\\\GitHub\\\\AIINAH\\\\src\\\\components\\\\chat\\\\AvatarStream.tsx\")",
+      "Bash(del \"C:\\\\Users\\\\danie\\\\Documents\\\\GitHub\\\\AIINAH\\\\src\\\\lib\\\\ConversationManager.ts\")",
+      "Bash(npx next build)",
+      "Bash(curl:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(timeout 15 bash:*)"
+    ]
+  }
+}

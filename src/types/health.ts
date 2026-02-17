@@ -76,7 +76,7 @@ export interface HealthScores {
     activityScore: number;
 
     /** Social connection level (1-10) */
-    lonelinesScore: number;
+    lonelinessScore: number;
 
     /** Lifestyle risk factors (1-10) */
     lifestyleScore: number;

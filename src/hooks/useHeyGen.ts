@@ -6,6 +6,7 @@ import StreamingAvatar, {
   StreamingEvents,
   TaskType
 } from '@heygen/streaming-avatar';
+import { HEYGEN_CONFIG } from '@/lib/config';
 
 interface HeyGenSession {
   sessionId: string;
@@ -52,10 +53,10 @@ export const useHeyGenAvatar = (avatarId: string) => {
       const sessionData = await avatar.current.createStartAvatar({
         avatarName: avatarId,
         quality: AvatarQuality.High,
-        language: 'en',
+        language: HEYGEN_CONFIG.LANGUAGE,
         voice: {
-          voiceId: '3812e7c0f3524b7193186317ea8049f9',
-          rate: 1.0,
+          voiceId: HEYGEN_CONFIG.VOICE_ID,
+          rate: HEYGEN_CONFIG.VOICE_RATE,
         },
         disableIdleTimeout: true,
       });
@@ -113,7 +114,7 @@ export const useHeyGenAvatar = (avatarId: string) => {
     session,
     isLoading,
     videoRef,
-    avatar: avatar.current,
+    avatarRef: avatar,
     startSession,
     endSession,
     speak

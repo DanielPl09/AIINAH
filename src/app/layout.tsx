@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AIINAH - Medical Wellness Dashboard",
-  description: "High-fidelity medical wellness avatar dashboard",
+  title: "AIINAH - AI Health Session",
+  description: "Interactive AI avatar health assessment with real-time analytics",
 };
 
 export default function RootLayout({
@@ -17,9 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <main className="min-h-screen">
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );
